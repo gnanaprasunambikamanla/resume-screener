@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resume Screening Service</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Upload Section -->
+    <div id="upload-section" class="upload-section">
+      <div class="container">
+        <h1>Resume Screening Service</h1>
+        <p>
+          Upload a resume and job description to get intelligent screening
+          analysis
+        </p>
+
+        <form id="screening-form">
+          <div class="upload-area" id="upload-area">
+            <div class="upload-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                ></path>
+              </svg>
+            </div>
+            <h3>Upload Resume</h3>
+            <p>Drag &amp; drop your resume here, or click to browse</p>
+            <p
+              style="font-size: var(--font-size-sm); margin-top: var(--space-8)"
+            >
+              Supports PDF and DOCX files
+            </p>
+            <input
+              type="file"
+              id="file-input"
+              class="file-input"
+              accept=".pdf,.docx,.doc"
+              required
+            />
+          </div>
+
+          <div id="file-info" class="file-info" style="display: none"></div>
+
+          <div class="form-group">
+            <label for="job-title" class="form-label">Job Title *</label>
+            <input
+              type="text"
+              id="job-title"
+              class="form-input"
+              placeholder="e.g., Senior Software Engineer"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="job-description" class="form-label"
+              >Job Description *</label
+            >
+            <textarea
+              id="job-description"
+              class="form-input"
+              placeholder="Paste the complete job description here..."
+              required
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="submit-btn">
+            <span>Analyse Resume</span>
+          </button>
+        </form>
+        <div class="advanced-toggle">
+          <button type="button" id="advanced-toggle" class="toggle-button">
+            <span>⚙️</span>
+            <span>Advanced Options</span>
+            <span id="toggle-icon">▼</span>
+          </button>
+
+          <div id="advanced-options" class="advanced-options">
+            <div class="form-group">
+              <label for="custom-weights" class="form-label"
+                >Custom Scoring Weights (JSON)</label
+              >
+              <textarea
+                id="custom-weights"
+                class="form-input"
+                placeholder='{"skills": 0.3, "experience": 0.4, "education": 0.2, "projects": 0.1}'
+              ></textarea>
+              <p
+                style="
+                  font-size: var(--font-size-sm);
+                  color: var(--color-text-secondary);
+                  margin-top: var(--space-8);
+                "
+              >
+                Optional: Customize how different factors are weighted in
+                scoring
+              </p>
+            </div>
+          </div>
+        </div>
+        <div
+          id="error-message"
+          class="error-message"
+          style="display: none"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+      <div class="loading-content">
+        <div class="spinner"></div>
+        <h3>Processing Resume...</h3>
+        <p>Analyzing skills, experience, and compatibility</p>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results-section" class="results-section">
+      <button class="btn btn-secondary back-button" id="back-button">
+        <span>← Upload Another</span>
+      </button>
+
+      <div class="results-header">
+        <h1>Screening Results</h1>
+        <p
+          id="job-title-display"
+          style="
+            font-size: var(--font-size-lg);
+            color: var(--color-text-secondary);
+            margin-top: var(--space-8);
+          "
+        >
+          <!-- The job title will appear here -->
+        </p>
+        <div class="overall-score">
+          <div class="score-circle">
+            <svg width="120" height="120">
+              <circle
+                cx="60"
+                cy="60"
+                r="54"
+                fill="none"
+                stroke="var(--color-border)"
+                stroke-width="8"
+              ></circle>
+              <circle
+                id="score-progress"
+                cx="60"
+                cy="60"
+                r="54"
+                fill="none"
+                stroke="var(--color-primary)"
+                stroke-width="8"
+                stroke-linecap="round"
+                stroke-dasharray="339.292"
+                stroke-dashoffset="339.292"
+              ></circle>
+            </svg>
+            <div class="score-text" id="overall-score-text">0</div>
+          </div>
+        </div>
+        <div id="recommendation-badge" class="recommendation-badge"></div>
+        <p
+          id="summary-text"
+          style="
+            max-width: 600px;
+            margin: var(--space-16) auto;
+            text-align: center;
+          "
+        ></p>
+      </div>
+
+      <div class="results-grid">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">📄 Resume Overview</h2>
+          </div>
+          <div id="resume-overview"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">📊 Screening Breakdown</h2>
+          </div>
+          <div id="screening-breakdown"></div>
+        </div>
+      </div>
+
+      <div class="results-grid" style="margin-top: var(--space-24)">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">💼 Experience &amp; Projects</h2>
+          </div>
+          <div id="experience-projects"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">✅ Analysis Summary</h2>
+          </div>
+          <div id="analysis-summary"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="scripts.js"></script>
+  </body>
+</html>
